@@ -1,5 +1,6 @@
 from flask import current_app as app, render_template, request, redirect
 from backend.models import *
+from flask_login import login_user,login_required,current_user
 
 
 @app.route("/",methods=["GET","POST"])
@@ -41,24 +42,38 @@ def login():
         cust_obj=db.session.query(Customer).filter_by(email=femail).first()
         ad_obj=db.session.query(Admin).filter_by(email=femail).first()
         if sp_obj and sp_obj.password==fpwd:
+            login_user(sp_obj)
             return redirect("/dashboard/sp")
         elif cust_obj and cust_obj.password==fpwd:
+            login_user(cust_obj)
             return redirect("/dashboard/cust")
         elif ad_obj and ad_obj.password==fpwd:
+            login_user(ad_obj)
             return redirect("/dashboard/ad")
         else:
             return "check your crendentials"
         
 
 @app.route("/dashboard/sp")
+@login_required
 def dash_sp():
-    return "Welcome to Service Provider Dashbord"
+    if isinstance(current_user,ServiceProvider):
+        return f"Welcome to Service Provider Dashbord{current_user.email}"
+    else:
+        return "error"
 
 @app.route("/dashboard/cust")
+@login_required
 def dash_cust():
-    return "Welcome to Customer Dashbord"
+    if isinstance(current_user,Customer):
+        return f"Welcome to Customer Dashbord{current_user.email}"
+    else:
+        return "error"
 
 @app.route("/dashboard/ad")
+@login_required
 def dash_ad():
-    return "Welcome to Admin Dashbord"
-
+    if isinstance(current_user,Admin):
+        return f"Welcome to Admin Dashbord{current_user.email}"
+    else:
+        return "error"

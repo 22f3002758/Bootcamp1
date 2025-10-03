@@ -1,20 +1,22 @@
 from flask_sqlalchemy import SQLAlchemy
-
+from flask_login import UserMixin
 db=SQLAlchemy()
 
 
-class Admin(db.Model):
+class Admin(db.Model,UserMixin):
     __tablename__='admin'
 
     id=db.Column(db.Integer, primary_key=True, autoincrement= True)
     admin_name=db.Column(db.String)
     email=db.Column(db.String,unique=True)
     password=db.Column(db.String,unique=True)
+    def get_id(self):
+        return self.email
     
 
 
     
-class ServiceProvider(db.Model):
+class ServiceProvider(db.Model,UserMixin):
     __tablename__='serviceprovider'
 
     id=db.Column(db.Integer, primary_key=True, autoincrement= True)
@@ -29,11 +31,13 @@ class ServiceProvider(db.Model):
     status=db.Column(db.String)
     servicename=db.Column(db.String,db.ForeignKey("services.name"))
     receive_request=db.relationship("Request",backref="servprovider",cascade="all, delete-orphan")
+    def get_id(self):
+        return self.email
     
 
 
 
-class Customer(db.Model):
+class Customer(db.Model,UserMixin):
     __tablename__="customer" 
 
     id=db.Column(db.Integer, primary_key=True, autoincrement= True)
@@ -45,6 +49,8 @@ class Customer(db.Model):
     phone=db.Column(db.String) 
     status=db.Column(db.String)
     Sent_Request=db.relationship("Request",backref="cust")
+    def get_id(self):
+        return self.email
    
 
 class Services(db.Model):
