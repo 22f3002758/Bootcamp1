@@ -34,6 +34,19 @@ class ServiceProvider(db.Model,UserMixin):
     def get_id(self):
         return self.email
     
+class Services(db.Model):
+    __tablename__="services"
+
+    id=db.Column(db.Integer, primary_key=True, autoincrement= True)
+    name=db.Column(db.String,unique=True)
+    baseprice=db.Column(db.Integer)
+    description=db.Column(db.String)
+    Sproviders=db.relationship("ServiceProvider",backref="service", cascade="all, delete-orphan")
+
+
+######Rahul id=1. I want to know the category of service he registerd in
+####backref   childobj.backref.attributenameOfParent Table
+    
 
 
 
@@ -53,14 +66,6 @@ class Customer(db.Model,UserMixin):
         return self.email
    
 
-class Services(db.Model):
-    __tablename__="services"
-
-    id=db.Column(db.Integer, primary_key=True, autoincrement= True)
-    name=db.Column(db.String,unique=True)
-    baseprice=db.Column(db.Integer)
-    description=db.Column(db.String)
-    Sproviders=db.relationship("ServiceProvider",backref="service", cascade="all, delete-orphan")
 
 
 

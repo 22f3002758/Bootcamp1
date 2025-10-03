@@ -74,6 +74,13 @@ def dash_cust():
 @login_required
 def dash_ad():
     if isinstance(current_user,Admin):
-        return f"Welcome to Admin Dashbord{current_user.email}"
+        return render_template("admin/admindash.html")
     else:
         return "error"
+    
+@app.route("/createservices",methods=["GET","POST"])   
+def services():
+    if request.method=="GET":
+        return render_template("admin/createservices.html")
+
+
