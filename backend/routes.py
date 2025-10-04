@@ -74,13 +74,82 @@ def dash_cust():
 @login_required
 def dash_ad():
     if isinstance(current_user,Admin):
-        return render_template("admin/admindash.html")
+        sp=db.session.query(ServiceProvider).all() #<serviceprovider1><serviceprovider2>
+        cust=db.session.query(Customer).all()
+        services=db.session.query(Services).all()
+        return render_template("admin/admindash.html",sps=sp, customers=cust,services=services)
     else:
         return "error"
     
 @app.route("/createservices",methods=["GET","POST"])   
 def services():
-    if request.method=="GET":
+    if request.method=="GET" and request.args.get("action")=="create":
         return render_template("admin/createservices.html")
+    elif request.method=="POST" and request.args.get("action")=="create":
+        fname=request.form.get("name")
+        fbp=request.form.get("baseprice")
+        fdesc=request.form.get("desc")
+        servobj=db.session.query(Services).filter_by(name=fname).first()
+        if not servobj:
+            dbserv=Services(name=fname,baseprice=fbp,description=fdesc)
+            db.session.add(dbserv)
+            db.session.commit()
+            return redirect("/dashboard/ad")
+        else:
+            return redirect("/createservices")  
+          
+    elif request.method=="GET" and request.args.get("action")=="edit":
+        id=request.args.get("id")
+        servobj=db.session.query(Services).filter_by(id=id).first()
+        return render_template("admin/createservices.html",servobj=servobj)
+    
+    elif request.method=="POST" and request.args.get("action")=="edit":
+        id=request.args.get("id")
+        fname=request.form.get("name")
+        fbp=request.form.get("baseprice")
+        fdesc=request.form.get("desc")
+        obj=db.session.query(Services).filter_by(id=id).first()
+        if fname:
+            obj.name=fname
+        if fbp:
+            obj.baseprice=fbp
+        if fdesc:
+            obj.description=fdesc  
+        db.session.commit()
+        return redirect("/dashboard/ad")      
+            
+@app.route("/manageproviders",methods=["GET","POST"])
+def manageproviders():
+    if request.method=="GET" and request.args.get("action")=="create":
+        services=db.session.query(Services).all()
+        return render_template("serviceprovider/createsp.html",services=services)
+    
+    elif request.method=="POST" and request.args.get("action")=="create":
+        femail=request.form.get("email")
+        fpwd=request.form.get("pwd")
+        fname=request.form.get("name")
+        fphone=request.form.get("phone")
+        fexp=request.form.get("exp")
+        fcat=request.form.get("cat")
+        spobj=db.session.query(ServiceProvider).filter_by(email=femail).first()
+        if not spobj:
+            obj=ServiceProvider(name=fname,email=femail,password=fpwd,phone=fphone,exp=fexp,servicename=fcat)
+            db.session.add(obj)
+            db.session.commit()
+            return redirect("/dashboard/ad")
+        
+    elif request.method=="GET" and request.args.get("action")=="edit":
+        
+        id=request.args.get("id")
+        spobj=db.session.query(ServiceProvider).filter_by(id=id).first()
+        
+        services=db.session.query(Services).all()
+        return render_template("serviceprovider/createsp.html",services=services,spobj=spobj)    
+
+    
+
+
+
+
 
 

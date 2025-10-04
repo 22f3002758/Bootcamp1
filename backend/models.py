@@ -80,21 +80,9 @@ class Request(db.Model):
     r_time=db.Column(db.String)
     r_address=db.Column(db.String)
     r_city=db.Column(db.String)
-    r_status=db.Column(db.String)
+    r_status=db.Column(db.String) # booked cancelled complete
     r_rating=db.Column(db.Integer)
 
 
 
-# class Request(db.Model):
-#     __tablename__="request"
-
-#     r_id=db.Column(db.Integer, primary_key=True, autoincrement= True)
-#     sp_id=db.Column(db.Integer, db.ForeignKey("serviceprovider.id"),nullable=False)
-#     c_id=db.Column(db.Integer, db.ForeignKey("customer.id"),nullable=False)
-    
-#     r_date=db.Column(db.String)
-#     r_time=db.Column(db.String)
-#     r_address=db.Column(db.String)
-#     r_city=db.Column(db.String)
-#     r_status=db.Column(db.String)
     

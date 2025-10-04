@@ -45,7 +45,7 @@
     <div class="card mt-5 ms-5 me-5">
         <div class="card-header d-flex ">
             <p>Services</p>
-            <a href="/createservices" class="btn btn-primary ms-auto me-3"><i class="bi bi-plus"></i>Create</a>
+            <a href="/createservices?action=create" class="btn btn-primary ms-auto me-3"><i class="bi bi-plus"></i>Create</a>
         </div>
         <div class="card-body">
             <table class="table border">
@@ -58,15 +58,17 @@
                     </tr>
                 </thead>
                 <tbody>
+                    {% for s in services %}
                     <tr>
-                        <th scope="row">Home Cleaning</th>
-                        <td>500</td>
-                        <td>Home cleaning Category</td>
+                        <th scope="row">{{s.name}}</th>
+                        <td>{{s.baseprice}}</td>
+                        <td>{{s.description}}</td>
                         <td>
-                            <button class="btn btn-primary ms-auto me-3"><i class="bi bi-pen"></i></button>
+                            <a href="/createservices?action=edit&id={{s.id}}" class="btn btn-primary ms-auto me-3"><i class="bi bi-pen"></i></a>
                             <button class="btn btn-primary ms-auto me-3"><i class="bi bi-trash"></i></button>
                         </td>
                     </tr>
+                    {% endfor %}
                     
                 </tbody>
             </table>
@@ -75,7 +77,7 @@
     <div class="card mt-5 ms-5 me-5">
         <div class="card-header d-flex ">
             <p>Service Providers</p>
-            <button class="btn btn-primary ms-auto me-3"><i class="bi bi-plus"></i>Create</button>
+            <a href="/manageproviders?action=create" class="btn btn-primary ms-auto me-3"><i class="bi bi-plus"></i>Create</a>
         </div>
         <div class="card-body">
             <table class="table border">
@@ -89,16 +91,18 @@
                     </tr>
                 </thead>
                 <tbody>
+                    {% for sp in sps %}
                     <tr>
-                        <th scope="row">Rahul</th>
-                        <td>Home Cleaning</td>
-                        <td>9873588947</td>
-                        <td>Rahul@gmail.com</td>
+                        <th scope="row">{{sp.name}}</th>
+                        <td>{{sp.servicename}}</td>
+                        <td>{{sp.phone}}</td>
+                        <td>{{sp.email}}</td>
                         <td>
-                            <button class="btn btn-primary ms-auto me-3"><i class="bi bi-pen"></i></button>
+                            <a href="/manageproviders?action=edit&id={{sp.id}}" class="btn btn-primary ms-auto me-3"><i class="bi bi-pen"></i></a>
                             <button class="btn btn-primary ms-auto me-3"><i class="bi bi-trash"></i></button>
                         </td>
                     </tr>
+                    {% endfor %}
                     
                 </tbody>
             </table>
@@ -121,16 +125,18 @@
                     </tr>
                 </thead>
                 <tbody>
+                    {% for c in customers %}
                     <tr>
-                        <th scope="row">Radha</th>
-                        <td>Active</td>
-                        <td>987654321</td>
-                        <td>radha@gmail.com</td>
+                        <th scope="row">{{c.name}}</th>
+                        <td>{{c.status}}</td>
+                        <td>{{c.phone}}</td>
+                        <td>{{c.email}}</td>
                         <td>
                             <button class="btn btn-primary ms-auto me-3"><i class="bi bi-eye"></i></button>
                             <button class="btn btn-primary ms-auto me-3">flag/unflag</button>
                         </td>
                     </tr>
+                    {% endfor %}
                     
                 </tbody>
             </table>
