@@ -15,12 +15,12 @@
 
             <div class="card-body">
 
-                <form action="/manageproviders?action={% if spobj %}edit{% else %}create{% endif %}" method="POST">
+                <form action="/manageproviders?action={% if spobj %}edit&id={{spobj.id}}{% else %}create{% endif %}" method="POST">
                     <div class="row">
                         <div class="mb-3 col">
                             <label for="exampleInputEmail1" class="form-label">Email address</label>
                             <input type="email" class="form-control" id="exampleInputEmail1"
-                                aria-describedby="emailHelp" name="email" value="{% if spobj %}{{spobj.email}}{% endif %}">
+                                aria-describedby="emailHelp" name="email" value="{% if spobj %}{{spobj.email}}{% endif %}" disabled>
 
                         </div>
                         <div class="mb-3 col">

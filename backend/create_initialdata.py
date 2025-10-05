@@ -11,7 +11,7 @@ with app.app_context():
         
     if db.session.query(ServiceProvider).count()==0:
         sp1=ServiceProvider(email="sp1@gmail.com",password="asdf",servicename='Home Cleaning',status="Active")
-        sp2=ServiceProvider(email="sp2@gmail.com",password="asdf",servicename='Home Cleaning',status="Requested")
+        sp2=ServiceProvider(email="sp2@gmail.com",password="asdf",servicename='Home Cleaning',status="Active")
         sp3=ServiceProvider(email="sp3@gmail.com",password="asdf",servicename='Home Decor',status="Active")
         sp4=ServiceProvider(email="sp4@gmail.com",password="asdf",servicename='Home Decor',status="Flagged")
         db.session.add_all([sp1,sp2,sp3,sp4])
@@ -21,7 +21,7 @@ with app.app_context():
         db.session.add(ad)
         db.session.commit() 
     if db.session.query(Customer).count()==0: 
-        cust=Customer(email="cust1@gmail.com",password="asdf",c_name='Rahul',c_status='Active')   
+        cust=Customer(email="cust1@gmail.com",password="asdf",name='Rahul',status='Active')   
         db.session.add(cust)
         db.session.commit() 
         

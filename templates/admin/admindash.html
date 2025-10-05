@@ -22,7 +22,7 @@
             <div class="collapse navbar-collapse " id="navbarSupportedContent">
                 <ul class="navbar-nav ms-auto me-3 fs-4 mb-2 mb-lg-0 ">
                     <li class="nav-item">
-                        <a class="nav-link active " aria-current="page" href="#">Search</a>
+                        <a class="nav-link active " aria-current="page" href="/search/admin">Search</a>
                     </li>
 
                     <li class="nav-item dropdown">
@@ -45,7 +45,8 @@
     <div class="card mt-5 ms-5 me-5">
         <div class="card-header d-flex ">
             <p>Services</p>
-            <a href="/createservices?action=create" class="btn btn-primary ms-auto me-3"><i class="bi bi-plus"></i>Create</a>
+            <a href="/createservices?action=create" class="btn btn-primary ms-auto me-3"><i
+                    class="bi bi-plus"></i>Create</a>
         </div>
         <div class="card-body">
             <table class="table border">
@@ -64,12 +65,41 @@
                         <td>{{s.baseprice}}</td>
                         <td>{{s.description}}</td>
                         <td>
-                            <a href="/createservices?action=edit&id={{s.id}}" class="btn btn-primary ms-auto me-3"><i class="bi bi-pen"></i></a>
-                            <button class="btn btn-primary ms-auto me-3"><i class="bi bi-trash"></i></button>
+                            <a href="/createservices?action=edit&id={{s.id}}" class="btn btn-primary ms-auto me-3"><i
+                                    class="bi bi-pen"></i></a>
+                            <!-- Button trigger modal -->
+                            <button type="button" class="btn btn-primary" data-bs-toggle="modal"
+                                data-bs-target="#exampleModal{{s.id}}">
+                                <i class="bi bi-trash"></i>
+                            </button>
+
+                            <!-- Modal -->
+                            <div class="modal fade" id="exampleModal{{s.id}}" tabindex="-1"
+                                aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                <div class="modal-dialog">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <h1 class="modal-title fs-5" id="exampleModalLabel">Delete {{s.name}}</h1>
+                                            <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                                aria-label="Close"></button>
+                                        </div>
+                                        <div class="modal-body">
+                                            Are you sure you want to delete {{s.name}}
+                                        </div>
+                                        <div class="modal-footer">
+                                            <button type="button" class="btn btn-secondary"
+                                                data-bs-dismiss="modal">Close</button>
+                                            <a href="/createservices?action=delete&id={{s.id}}" type="button"
+                                                class="btn btn-primary">Delete</a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
                         </td>
                     </tr>
                     {% endfor %}
-                    
+
                 </tbody>
             </table>
         </div>
@@ -77,7 +107,8 @@
     <div class="card mt-5 ms-5 me-5">
         <div class="card-header d-flex ">
             <p>Service Providers</p>
-            <a href="/manageproviders?action=create" class="btn btn-primary ms-auto me-3"><i class="bi bi-plus"></i>Create</a>
+            <a href="/manageproviders?action=create" class="btn btn-primary ms-auto me-3"><i
+                    class="bi bi-plus"></i>Create</a>
         </div>
         <div class="card-body">
             <table class="table border">
@@ -98,12 +129,40 @@
                         <td>{{sp.phone}}</td>
                         <td>{{sp.email}}</td>
                         <td>
-                            <a href="/manageproviders?action=edit&id={{sp.id}}" class="btn btn-primary ms-auto me-3"><i class="bi bi-pen"></i></a>
-                            <button class="btn btn-primary ms-auto me-3"><i class="bi bi-trash"></i></button>
+                            <a href="/manageproviders?action=edit&id={{sp.id}}" class="btn btn-primary ms-auto me-3"><i
+                                    class="bi bi-pen"></i></a>
+                            <!-- Button trigger modal -->
+                            <button type="button" class="btn btn-primary" data-bs-toggle="modal"
+                                data-bs-target="#exampleModal{{sp.email}}">
+                                <i class="bi bi-trash"></i>
+                            </button>
+
+                            <!-- Modal -->
+                            <div class="modal fade" id="exampleModal{{sp.email}}" tabindex="-1" aria-labelledby="exampleModalLabel"
+                                aria-hidden="true">
+                                <div class="modal-dialog">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <h1 class="modal-title fs-5" id="exampleModalLabel">Delete {{sp.name}}</h1>
+                                            <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                                aria-label="Close"></button>
+                                        </div>
+                                        <div class="modal-body">
+                                            Are you sure you want to delete {{sp.name}}?
+                                        </div>
+                                        <div class="modal-footer">
+                                            <button type="button" class="btn btn-secondary"
+                                                data-bs-dismiss="modal">Close</button>
+                                            <a href="/manageproviders?action=delete&id={{sp.id}}"type="button" class="btn btn-primary">Delete</a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
                         </td>
                     </tr>
                     {% endfor %}
-                    
+
                 </tbody>
             </table>
         </div>
@@ -132,12 +191,12 @@
                         <td>{{c.phone}}</td>
                         <td>{{c.email}}</td>
                         <td>
-                            <button class="btn btn-primary ms-auto me-3"><i class="bi bi-eye"></i></button>
-                            <button class="btn btn-primary ms-auto me-3">flag/unflag</button>
+                            <a href="/viewcusthist?id={{c.id}}" class="btn btn-primary ms-auto me-3"><i class="bi bi-eye"></i></a>
+                            <a href="/managecust?action={% if c.status=='Active'%}flag{% else %}unflag{% endif %}&id={{c.id}}" class="btn btn-primary ms-auto me-3">{% if c.status=='Active'%}Flag{% else %}Unflag{% endif %}</a>
                         </td>
                     </tr>
                     {% endfor %}
-                    
+
                 </tbody>
             </table>
         </div>

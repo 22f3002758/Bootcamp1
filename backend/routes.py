@@ -1,6 +1,7 @@
 from flask import current_app as app, render_template, request, redirect
 from backend.models import *
 from flask_login import login_user,login_required,current_user
+from sqlalchemy import and_,or_
 
 
 @app.route("/",methods=["GET","POST"])
@@ -116,7 +117,15 @@ def services():
         if fdesc:
             obj.description=fdesc  
         db.session.commit()
-        return redirect("/dashboard/ad")      
+        return redirect("/dashboard/ad")  
+       
+    elif request.method=="GET" and request.args.get("action")=="delete":
+        id=request.args.get("id")
+        servobj=db.session.query(Services).filter_by(id=id).first()
+        db.session.delete(servobj)
+        db.session.commit()
+        return redirect("dashboard/ad")
+
             
 @app.route("/manageproviders",methods=["GET","POST"])
 def manageproviders():
@@ -145,10 +154,80 @@ def manageproviders():
         
         services=db.session.query(Services).all()
         return render_template("serviceprovider/createsp.html",services=services,spobj=spobj)    
+    
+    elif request.method=="POST" and request.args.get("action")=="edit":
+        id=request.args.get("id")
+        spobj=db.session.query(ServiceProvider).filter_by(id=id).first()
+        
+        fpwd=request.form.get("pwd")
+        fname=request.form.get("name")
+        fphone=request.form.get("phone")
+        fexp=request.form.get("exp")
+        fcat=request.form.get("cat")
+        
+        if fpwd:
+            spobj.password=fpwd
+        if fname:
+            spobj.name=fname
+        if fphone:
+            spobj.phone=fphone
+        if fexp:
+            spobj.exp=fexp
+        if fcat:
+            spobj.servicename=fcat
+        db.session.commit()
+        return redirect("dashboard/ad")    
+     
+    elif request.method=="GET" and request.args.get("action")=="delete":
+        id=request.args.get("id")
+        spobj=db.session.query(ServiceProvider).filter_by(id=id).first()
+        db.session.delete(spobj)
+        db.session.commit()
+        return redirect("dashboard/ad")      
+
+@app.route("/managecust",methods=["GET","POST"])
+def managecust():
+    id=request.args.get("id")
+    custobj=db.session.query(Customer).filter_by(id=id).first()
+    if request.args.get("action")=="flag":
+        custobj.status="Flagged"
+        db.session.commit()
+        return redirect("dashboard/ad")
+    elif request.args.get("action")=="unflag":
+        custobj.status="Active"
+        db.session.commit()
+        return redirect("dashboard/ad")
+    
+@app.route("/viewcusthist",methods=["GET","POST"])  
+def viewhist(): 
+    if request.method=="GET":
+        id=request.args.get("id")
+        reqobj=db.session.query(Request).filter(and_(Request.c_id==id,Request.r_status=="Completed")).all()
+        return render_template("customer/viewcusthistory.html",reqs=reqobj)
+    
+@app.route("/search/admin",methods=["GET","POST"])
+def searchadmin():
+    if request.method=="GET":
+        return render_template("admin/search.html")   
+    elif request.method=="POST":
+        qtype=request.form.get("querytype")
+        qry=request.form.get("query")
+        if qtype=="service" and qry:
+            obj=db.session.query(Services).filter(or_(Services.name.ilike(f"%{qry}%"),Services.description.ilike(f"%{qry}%"))).all()
+            return render_template("admin/search.html", services=obj,qtype=qtype)
+        if qtype=="sp" and qry:
+            obj=db.session.query(ServiceProvider).filter(or_(ServiceProvider.name.ilike(f"%{qry}%"),ServiceProvider.email.ilike(f"%{qry}%"))).all()
+            return render_template("admin/search.html", sps=obj,qtype=qtype)
+        if qtype=="cust" and qry:
+            obj=db.session.query(Customer).filter(or_(Customer.name.ilike(f"%{qry}%"),Customer.email.ilike(f"%{qry}%"))).all()
+            return render_template("admin/search.html", customers=obj,qtype=qtype)
+
+
+
+     
+
 
     
-
-
 
 
 

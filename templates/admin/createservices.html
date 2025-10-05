@@ -15,7 +15,7 @@
             
             <div class="card-body">
 
-                <form action="/createservices?action={% if servobj %}edit{% else %}create{% endif %}&id={{servobj.id}}" method="POST" >
+                <form action="/createservices?action={% if servobj %}edit&id={{servobj.id}}{% else %}create{% endif %}" method="POST" >
                     
                     <div class="mb-3">
                         <label for="exampleInputPassword1" class="form-label">Name</label>
