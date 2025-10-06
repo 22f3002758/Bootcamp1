@@ -94,7 +94,7 @@
                         <th scope="col">Name</th>
                         <th scope="col">Base Price</th>
                         <th scope="col">Description</th>
-                        
+
                     </tr>
                 </thead>
                 <tbody>
@@ -103,7 +103,7 @@
                         <th scope="row">{{s.name}}</th>
                         <td>{{s.baseprice}}</td>
                         <td>{{s.description}}</td>
-                        
+
                     </tr>
                     {% endfor %}
 
@@ -121,9 +121,10 @@
     <div class="card mt-5 ms-5 me-5">
         <div class="card-header d-flex ">
             <p>Service Providers</p>
-            
+
         </div>
         <div class="card-body">
+            {% if sps %}
             <table class="table border">
                 <thead>
                     <tr>
@@ -131,7 +132,7 @@
                         <th scope="col">Service</th>
                         <th scope="col">Phone</th>
                         <th scope="col">Email</th>
-                        
+
                     </tr>
                 </thead>
                 <tbody>
@@ -141,15 +142,20 @@
                         <td>{{sp.servicename}}</td>
                         <td>{{sp.phone}}</td>
                         <td>{{sp.email}}</td>
-                        
+
                     </tr>
                     {% endfor %}
 
                 </tbody>
             </table>
+            {% else %}
+            <div class="text-center">
+                <p>No Data Found</p>
+            </div>
+            {% endif %}
         </div>
     </div>
-     {% endif %}
+    {% endif %}
     {% if qtype=='cust' %}
     <div class="card mt-5 ms-5 me-5">
         <div class="card-header d-flex ">
@@ -157,6 +163,7 @@
 
         </div>
         <div class="card-body">
+            {% if customers %}
             <table class="table border">
                 <thead>
                     <tr>
@@ -164,7 +171,7 @@
                         <th scope="col">Status</th>
                         <th scope="col">Phone</th>
                         <th scope="col">Email</th>
-                        
+
                     </tr>
                 </thead>
                 <tbody>
@@ -174,12 +181,17 @@
                         <td>{{c.status}}</td>
                         <td>{{c.phone}}</td>
                         <td>{{c.email}}</td>
-                        
+
                     </tr>
                     {% endfor %}
 
                 </tbody>
             </table>
+            {% else %}
+            <div class="text-center">
+                <p>No Data Found</p>
+            </div>
+            {% endif %}
         </div>
     </div>
     {% endif %}

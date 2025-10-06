@@ -2,7 +2,7 @@ from flask import current_app as app, render_template, request, redirect
 from backend.models import *
 from flask_login import login_user,login_required,current_user
 from sqlalchemy import and_,or_
-
+from datetime import datetime,timedelta
 
 @app.route("/",methods=["GET","POST"])
 def home():
@@ -58,18 +58,48 @@ def login():
 @app.route("/dashboard/sp")
 @login_required
 def dash_sp():
-    if isinstance(current_user,ServiceProvider):
-        return f"Welcome to Service Provider Dashbord{current_user.email}"
+    if isinstance(current_user,ServiceProvider) and request.method=="GET":
+        reqobj=current_user.receive_request
+        return render_template("serviceprovider/spdash.html",requests=reqobj)
     else:
-        return "error"
+        return "Unauthorized to access this page."
+
+def nextsevendates():
+    today=datetime.now().date()
+    L=[]
+    for i in range(7):
+        L.append(today+timedelta(days=i))
+    return L    
+fixed_slots=[('09','10'),('10','11'),('10','11'),('11','12'),('15','16'),('16','17'),('17','18')] 
+
+    
+@app.route("/availability/sp",methods=["GET","POST"])
+def availability():
+    if request.method=="GET":
+        L=[]
+        nextsevendays=nextsevendates()
+        for i in nextsevendays:
+            d={}
+            d["date"]=i
+            d["slots"]=fixed_slots
+            L.append(d)
+        return render_template("serviceprovider/availability.html",all_slots=L)    
 
 @app.route("/dashboard/cust")
 @login_required
 def dash_cust():
-    if isinstance(current_user,Customer):
-        return f"Welcome to Customer Dashbord{current_user.email}"
+    if isinstance(current_user,Customer) and request.method=="GET":
+        reqs=current_user.Sent_Request
+        servobjs=db.session.query(Services).all()
+        return render_template("customer/custdash.html",requests=reqs,services=servobjs)
     else:
         return "error"
+    
+@app.route("/service/<servicename>")
+def service(servicename):
+    if request.method=="GET":
+        sps=db.session.query(ServiceProvider).filter_by(servicename=servicename).all()
+    return render_template("customer/service.html",sps=sps)    
 
 @app.route("/dashboard/ad")
 @login_required
