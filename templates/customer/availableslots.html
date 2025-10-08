@@ -37,38 +37,43 @@
         </div>
     </nav>
     <div class="container-fluid d-flex justify-content-center mt-5 ">
-        <div class="card" style="width: 90rem;">
-
+        <div class="card">
+            <div class="card-header"><strong>Book Your Slot</strong></div>
             <div class="card-body">
-                <table class="table">
+                <form action="/availability/sp" method="POST">
+                <table class="table border">
                     <thead>
                         <tr>
                             <th scope="col">Date</th>
-                            {% for i in range(1,8) %}
-                            <th scope="col">slot{{i}}</th>
-                            {% endfor %}
+
+                            <th scope="col">slots</th>
+
                         </tr>
                     </thead>
-                    <form action="/availability/sp" method="POST">
-                        <tbody>
-                            {% for slot in all_slots %}
-                            <tr>
-                                <th scope="row">{{slot.date}}</th>
-                                {% for s in slot.slots %}
-                                {% set slot_value=slot.date.strftime('%Y-%m-%d')+'_'+s.start_time.strftime('%H:%M')+"_"+s.end_time.strftime('%H:%M') %}
-                                <td>
-                                    <input type="checkbox" class="btn-check" id="btn-check-{{slot.date}}{{loop.index}}"
-                                        autocomplete="off" name="slot" value="{{slot_value}}" {% if s.status=="Booked" %}checked disabled{% elif s.status=="Selected" %}checked{% endif %}>
-                                    <label class="btn btn-outline-primary"
-                                        for="btn-check-{{slot.date}}{{loop.index}}">{{s.start_time}}-{{s.end_time}}</label>
-                                </td>
+
+                    <tbody>
+                        {% for date,slots in spslots.items() %}
+                        <tr>
+                            <th scope="row">{{date}}</th>
+                            <td>
+                                {% for slot in slots %}
+                                {% set
+                                slot_value=slot.date.strftime('%Y-%m-%d')+'_'+slot.start_time.strftime('%H:%M')+'_'+slot.end_time.strftime('%H:%M')
+                                %}
+                                <input type="checkbox" class="btn-check" id="btn-check-{{slot.date}}{{loop.index}}"
+                                    autocomplete="off" name="slot" value="{{slot_value}}">
+                                <label class="btn btn-outline-primary"
+                                    for="btn-check-{{slot.date}}{{loop.index}}">{{slot.start_time.strftime('%H:%M')}}-{{slot.end_time.strftime('%H:%M')}}</label>
                                 {% endfor %}
-                            </tr>
-                            {% endfor %}
-                        </tbody>
-                        <button type="submit" class="btn btn-primary">Submit</button>
-                    </form>
+                            </td>
+
+                        </tr>
+                        {% endfor %}
+                    </tbody>
                 </table>
+                <button type="submit" class="btn btn-primary">Submit</button>
+                </form>
+
             </div>
         </div>
     </div>

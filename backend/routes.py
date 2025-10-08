@@ -1,6 +1,6 @@
 from flask import current_app as app, render_template, request, redirect
 from backend.models import *
-from flask_login import login_user,login_required,current_user
+from flask_login import login_user,login_required,current_user,logout_user
 from sqlalchemy import and_,or_
 from datetime import datetime,timedelta
 
@@ -54,6 +54,10 @@ def login():
         else:
             return "check your crendentials"
         
+@app.route("/logout")
+def logout():
+    logout_user()
+    return redirect("/login")        
 
 @app.route("/dashboard/sp")
 @login_required
@@ -70,20 +74,54 @@ def nextsevendates():
     for i in range(7):
         L.append(today+timedelta(days=i))
     return L    
-fixed_slots=[('09','10'),('10','11'),('10','11'),('11','12'),('15','16'),('16','17'),('17','18')] 
+def get_fixedslots():
 
-    
+    fixed_slots=[('09:00','10:00'),('10:00','11:00'),('11:00','12:00'),('12:00','13:00'),('15:00','16:00'),('16:00','17:00'),('17:00','18:00')]
+    L=[]
+    for fs in fixed_slots:
+        L.append((datetime.strptime(fs[0],'%H:%M').time(),datetime.strptime(fs[1],'%H:%M').time()))
+    return L
+
 @app.route("/availability/sp",methods=["GET","POST"])
 def availability():
     if request.method=="GET":
         L=[]
         nextsevendays=nextsevendates()
-        for i in nextsevendays:
-            d={}
-            d["date"]=i
-            d["slots"]=fixed_slots
-            L.append(d)
-        return render_template("serviceprovider/availability.html",all_slots=L)    
+        fixedslots=get_fixedslots()
+        existing_slots=db.session.query(ProvidersAvailability).filter(ProvidersAvailability.sp_id==current_user.id,ProvidersAvailability.date>=datetime.now().date()).all()
+        for day in nextsevendays:
+            slot_list=[]
+            for start,end in fixedslots:
+
+                if any(es.date==day and es.start_time==start and es.end_time == end and es.status=='Booked' for es in existing_slots ):
+                    slot_list.append({'start_time':start,'end_time':end,'status':'Booked'})
+                elif any(es.date==day and es.start_time==start and es.end_time == end and es.status=='Available' for es in existing_slots ):
+                    slot_list.append({'start_time':start,'end_time':end,'status':'Selected'})    
+                else:
+                    slot_list.append({'start_time':start,'end_time':end,'status':'Not Selected'})
+
+            L.append({'date':day,'slots':slot_list})
+            ##L=[{'date':value,'slots':slot_list}]
+            #slot_list=[{'start_time':value,'end_time':value,'status':value}]
+            print(L)
+          
+        return render_template("serviceprovider/availability.html",all_slots=L)  
+    
+    elif request.method=="POST":
+        selected_slots=request.form.getlist("slot")
+        db.session.query(ProvidersAvailability).filter(ProvidersAvailability.sp_id==current_user.id,ProvidersAvailability.status=='Available',
+                                                       ProvidersAvailability.date>=datetime.now().date()).delete(synchronize_session=False)
+        db.session.commit()
+        for s in selected_slots:
+            avail_date,start_time,end_time=s.split("_")
+            avail_date=datetime.strptime(avail_date,"%Y-%m-%d").date()
+            start_time=datetime.strptime(start_time,'%H:%M').time()
+            end_time=datetime.strptime(end_time,'%H:%M').time()
+            pa=ProvidersAvailability(sp_id=current_user.id,date=avail_date,start_time=start_time,end_time=end_time,status='Available')
+            db.session.add(pa)
+            db.session.commit()
+        return redirect("/dashboard/sp")    
+
 
 @app.route("/dashboard/cust")
 @login_required

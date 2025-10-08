@@ -82,7 +82,17 @@ class Request(db.Model):
     r_city=db.Column(db.String)
     r_status=db.Column(db.String) # booked cancelled complete
     r_rating=db.Column(db.Integer)
+    slot_id=db.Column(db.Integer,db.ForeignKey("providersavailability.id"),unique=True)
 
 
 
+class ProvidersAvailability(db.Model):
+    __tablename__="providersavailability"
+
+    id=db.Column(db.Integer, primary_key=True, autoincrement= True)
+    sp_id=db.Column(db.Integer, db.ForeignKey("serviceprovider.id"),nullable=False)
+    date=db.Column(db.Date,nullable=False)
+    start_time=db.Column(db.Time,nullable=False)
+    end_time=db.Column(db.Time,nullable=False)
+    status=db.Column(db.String,nullable=False) # available, booked
     
