@@ -75,13 +75,10 @@ class Request(db.Model):
     r_id=db.Column(db.Integer, primary_key=True, autoincrement= True)
     sp_id=db.Column(db.Integer, db.ForeignKey("serviceprovider.id"),nullable=False)
     c_id=db.Column(db.Integer, db.ForeignKey("customer.id"),nullable=False)
-    
-    r_date=db.Column(db.String)
-    r_time=db.Column(db.String)
-    r_address=db.Column(db.String)
-    r_city=db.Column(db.String)
+    r_date=db.Column(db.Date)
+    start_time=db.Column(db.Time)
+    end_time=db.Column(db.Time)
     r_status=db.Column(db.String) # booked cancelled complete
-    r_rating=db.Column(db.Integer)
     slot_id=db.Column(db.Integer,db.ForeignKey("providersavailability.id"),unique=True)
 
 

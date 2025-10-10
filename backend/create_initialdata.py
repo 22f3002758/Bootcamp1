@@ -25,10 +25,10 @@ with app.app_context():
         db.session.add(cust)
         db.session.commit() 
         
-    if db.session.query(Request).count()==0:
-        req=Request(sp_id=1,c_id=1,r_status="Completed",r_date="25-08-2025")    
-        db.session.add(req)
-        db.session.commit()
+    # if db.session.query(Request).count()==0:
+    #     req=Request(sp_id=1,c_id=1,r_status="Completed",r_date="25-08-2025")    
+    #     db.session.add(req)
+    #     db.session.commit()
 
     ##accessing variables of ServiceProvider's table (Child) from Services table (parent) 
     # srv1=db.session.query(Services).filter_by(id=1).first()

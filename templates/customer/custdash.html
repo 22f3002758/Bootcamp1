@@ -7,6 +7,7 @@
     <title>Home</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet"
         integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css">
 </head>
 
 <body>
@@ -25,8 +26,8 @@
                             aria-expanded="false">
                             <i class="bi bi-person"></i>
                         </a>
-                        <ul class="dropdown-menu">
-                            <li><a class="dropdown-item" href="#">Logout</a></li>
+                        <ul class="dropdown-menu dropdown-menu-end">
+                            <li><a class="dropdown-item" href="/logout">Logout</a></li>
 
                         </ul>
                     </li>
@@ -64,21 +65,60 @@
                         <th scope="col">Service Name</th>
                         <th scope="col">Providers Name</th>
                         <th scope="col">Date</th>
-                        <th scope="col">Time</th>
+                        <th scope="col">Start Time</th>
+                        <th scope="col">End Time</th>
                         <th scope="col">Actions</th>
                     </tr>
                 </thead>
                 <tbody>
                     {% for req in requests %}
+                    {% if req.r_status=='Booked' %}
                     <tr>
                         <th scope="row">{{req.servprovider.servicename}}</th>
                         <td>{{req.servprovider.name}}</td>
                         <td>{{req.r_date}}</td>
-                        <td>{{req.r_time}}</td>
+                        <td>{{req.start_time}}</td>
+                        <td>{{req.end_time}}</td>
                         <td>
-                            <button class="btn btn-primary">Cancel</button>
+                            <a href="/managerequest?action=cancel&id={{req.r_id}}" class="btn btn-primary">Cancel </a>
                         </td>
                     </tr>
+                    {% endif %}
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <div class="card mt-5 me-5 ms-5">
+        <div class="card-header">
+            Requests History
+        </div>
+        <div class="card-body">
+            <table class="table border">
+                <thead>
+                    <tr>
+                        <th scope="col">Service Name</th>
+                        <th scope="col">Providers Name</th>
+                        <th scope="col">Date</th>
+                        <th scope="col">Start Time</th>
+                        <th scope="col">End Time</th>
+                        <th scope="col">Status</th>
+                        
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for req in requests %}
+                    {% if req.r_status!='Booked' %}
+                    <tr>
+                        <th scope="row">{{req.servprovider.servicename}}</th>
+                        <td>{{req.servprovider.name}}</td>
+                        <td>{{req.r_date}}</td>
+                        <td>{{req.start_time}}</td>
+                        <td>{{req.end_time}}</td>
+                        <td>{{req.r_status}}</td>
+                        
+                    </tr>
+                    {% endif %}
                     {% endfor %}
                 </tbody>
             </table>

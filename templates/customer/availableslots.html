@@ -7,6 +7,7 @@
     <title>Home</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet"
         integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css">
 </head>
 
 <body>
@@ -19,14 +20,14 @@
                 <span class="navbar-toggler-icon"></span>
             </button>
             <div class="collapse navbar-collapse " id="navbarSupportedContent">
-                <ul class="navbar-nav ms-auto me-3 fs-4 mb-2 mb-lg-0 ">;
+                <ul class="navbar-nav ms-auto me-3 fs-4 mb-2 mb-lg-0 ">
                     <li class="nav-item dropdown">
                         <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown"
                             aria-expanded="false">
                             <i class="bi bi-person"></i>
                         </a>
-                        <ul class="dropdown-menu">
-                            <li><a class="dropdown-item" href="#">Logout</a></li>
+                        <ul class="dropdown-menu dropdown-menu-end">
+                            <li><a class="dropdown-item" href="/logout">Logout</a></li>
 
                         </ul>
                     </li>
@@ -37,43 +38,44 @@
         </div>
     </nav>
     <div class="container-fluid d-flex justify-content-center mt-5 ">
-        <div class="card">
-            <div class="card-header"><strong>Book Your Slot</strong></div>
+        <div class="card" style="width: 90rem;">
+
             <div class="card-body">
-                <form action="/availability/sp" method="POST">
-                <table class="table border">
+                <form action="/slotbooking" method="POST">
+                <table class="table">
                     <thead>
                         <tr>
                             <th scope="col">Date</th>
-
-                            <th scope="col">slots</th>
-
+                            
+                            <th scope="col">Slots</th>
+                            
                         </tr>
                     </thead>
+                    
+                        <tbody>
+                            {% for date,slots in all_slots.items() %}
+                                <tr>
+                                    <th scope="row">{{date}}</th>
 
-                    <tbody>
-                        {% for date,slots in spslots.items() %}
-                        <tr>
-                            <th scope="row">{{date}}</th>
-                            <td>
-                                {% for slot in slots %}
-                                {% set
-                                slot_value=slot.date.strftime('%Y-%m-%d')+'_'+slot.start_time.strftime('%H:%M')+'_'+slot.end_time.strftime('%H:%M')
-                                %}
-                                <input type="checkbox" class="btn-check" id="btn-check-{{slot.date}}{{loop.index}}"
-                                    autocomplete="off" name="slot" value="{{slot_value}}">
-                                <label class="btn btn-outline-primary"
-                                    for="btn-check-{{slot.date}}{{loop.index}}">{{slot.start_time.strftime('%H:%M')}}-{{slot.end_time.strftime('%H:%M')}}</label>
-                                {% endfor %}
-                            </td>
-
-                        </tr>
-                        {% endfor %}
-                    </tbody>
+                                    <td>
+                                        {% for s in slots %}
+                                        {% set sid=s.id | string %}
+                                        {% set slot_value=date.strftime('%Y-%m-%d')+'_'+s.start_time.strftime('%H:%M')+"_"+s.end_time.strftime('%H:%M')+"_"+sid %}
+                                        
+                                            <input type="radio" class="btn-check" id="btn-check-{{date}}{{loop.index}}"
+                                                autocomplete="off" name="slot" value="{{slot_value}}" {% if s.status=="Booked" %}checked disabled{% elif s.status=="Selected" %}checked{% endif %}>
+                                            <label class="btn btn-outline-primary"
+                                                for="btn-check-{{date}}{{loop.index}}">{{s.start_time}}-{{s.end_time}}</label>                                
+                                        {% endfor %}
+                                    </td>    
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                        
+                    
                 </table>
-                <button type="submit" class="btn btn-primary">Submit</button>
+                <button type="submit" class="btn btn-primary">Submit</button>   
                 </form>
-
             </div>
         </div>
     </div>

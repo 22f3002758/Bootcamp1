@@ -139,6 +139,74 @@ def service(servicename):
         sps=db.session.query(ServiceProvider).filter_by(servicename=servicename).all()
     return render_template("customer/service.html",sps=sps)    
 
+
+@app.route("/slotbooking",methods=["GET","POST"])
+def booking():
+    if request.method=="GET":
+        id=request.args.get("id")
+        paobj=db.session.query(ProvidersAvailability).filter(
+        ProvidersAvailability.sp_id==id,
+        ProvidersAvailability.status=='Available',
+        or_(
+            ProvidersAvailability.date>datetime.now().date(), #future dates
+            and_(
+                ProvidersAvailability.date==datetime.now().date(), # same day
+                ProvidersAvailability.start_time>=datetime.now().time() # after current tiome
+            )
+        )
+        )
+        d={}
+        for pa in paobj:
+            if pa.date not in d:
+                d[pa.date]=[pa]
+            else:
+                d[pa.date].append(pa)
+        return render_template("customer/availableslots.html",all_slots=d)  
+
+    elif request.method=="POST":
+        slotstring=request.form.get("slot")
+        book_date,start_time,end_time,slot_id=slotstring.split("_")    
+        book_date=datetime.strptime(book_date,"%Y-%m-%d").date()
+        start_time=datetime.strptime(start_time,'%H:%M').time()
+        end_time=datetime.strptime(end_time,'%H:%M').time()   
+        paobj=db.session.query(ProvidersAvailability).filter_by(id=slot_id).first()
+
+        spid=paobj.sp_id
+        req=Request(slot_id=slot_id,r_date=book_date,start_time=start_time,end_time=end_time,sp_id=spid,c_id=current_user.id,r_status='Booked') 
+        paobj.status='Booked'
+        db.session.add(req)
+        db.session.commit()
+        return redirect("dashboard/cust")
+    
+@app.route('/managerequest', methods=["GET","POST"])
+def cancelbooking():
+    if request.method=="GET" and request.args.get("action")=='cancel':
+        reqid=request.args.get('id')
+        reqobj=db.session.query(Request).filter_by(r_id=reqid).first()
+        reqobj.r_status="Cancelled"
+        # slot_id=reqobj.slot_id
+        paobj=db.session.query(ProvidersAvailability).filter_by(id=reqobj.slot_id).first()
+        paobj.status='Available'
+        db.session.commit()
+        if isinstance(current_user,Customer):
+            return redirect("dashboard/cust")
+        if isinstance(current_user,ServiceProvider):
+            return redirect("dashboard/sp")
+        
+    elif request.method=="GET" and request.args.get("action")=='complete':    
+        reqid=request.args.get("id")
+        reqobj=db.session.query(Request).filter_by(r_id=reqid).first()
+        reqobj.r_status="Completed"
+        paobj=db.session.query(ProvidersAvailability).filter_by(id=reqobj.slot_id).first()
+        paobj.status='Completed'
+        db.session.commit()
+        return redirect("dashboard/sp")
+
+
+
+
+        
+
 @app.route("/dashboard/ad")
 @login_required
 def dash_ad():
