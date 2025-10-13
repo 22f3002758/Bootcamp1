@@ -3,6 +3,10 @@ from backend.models import *
 from flask_login import login_user,login_required,current_user,logout_user
 from sqlalchemy import and_,or_
 from datetime import datetime,timedelta
+import os
+import matplotlib.pyplot as plt
+import matplotlib
+matplotlib.use('agg')
 
 @app.route("/",methods=["GET","POST"])
 def home():
@@ -15,7 +19,7 @@ def register():
         return render_template("cust_register.html")
     elif request.method=="POST":
         print("Hello")
-        fname=request.form.get("cname") #cname is a variable we have used it in html form name="cname"
+        fname=request.form.get("cname").capitalize() #cname is a variable we have used it in html form name="cname"
         femail=request.form.get("cemail")
         fpwd=request.form.get("cpwd")
         fcity=request.form.get("ccity")
@@ -358,9 +362,42 @@ def searchadmin():
             obj=db.session.query(Customer).filter(or_(Customer.name.ilike(f"%{qry}%"),Customer.email.ilike(f"%{qry}%"))).all()
             return render_template("admin/search.html", customers=obj,qtype=qtype)
 
+@app.route("/search/cust",methods=["GET","POST"])
+def searchcust():
+    if request.method=="GET":
+        return render_template("customer/search.html")   
+    elif request.method=="POST":
+        qtype=request.form.get("querytype")
+        qry=request.form.get("query")
+        if qtype=="service" and qry:
+            obj=db.session.query(Services).filter(or_(Services.name.ilike(f"%{qry}%"),Services.description.ilike(f"%{qry}%"))).all()
+            return render_template("customer/search.html", services=obj,qtype=qtype)
+        if qtype=="sp" and qry:
+            obj=db.session.query(ServiceProvider).filter(or_(ServiceProvider.name.ilike(f"%{qry}%"),ServiceProvider.email.ilike(f"%{qry}%"))).all()
+            return render_template("customer/search.html", sps=obj,qtype=qtype)
+        
 
+@app.route("/admin/statistics")
+def stats():
+    if request.method=="GET":
+        servicenames=[]
+        no_of_providers=[]
+        all_service=db.session.query(Services).all()  
+        for s in all_service:
+            servicenames.append(s.name)
+            count=len(s.Sproviders)
+            no_of_providers.append(count)
+        # install matplotlib    
+        plt.bar(servicenames,no_of_providers)
+        plt.xlabel('Services')
+        plt.ylabel('No of providers')
+        plt.title("Services vs no of providers")
+        os.makedirs('./static', exist_ok=True)
+        plt.savefig('./static/services_vs_noofproviders.png')
+        plt.close()
+        return render_template("/admin/statistic.html") 
+    
 
-     
 
 
     

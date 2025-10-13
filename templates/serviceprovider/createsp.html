@@ -20,7 +20,7 @@
                         <div class="mb-3 col">
                             <label for="exampleInputEmail1" class="form-label">Email address</label>
                             <input type="email" class="form-control" id="exampleInputEmail1"
-                                aria-describedby="emailHelp" name="email" value="{% if spobj %}{{spobj.email}}{% endif %}" disabled>
+                                aria-describedby="emailHelp" name="email" value="{% if spobj %}{{spobj.email}}{% endif %}" {% if spobj %} disabled {% endif %} >
 
                         </div>
                         <div class="mb-3 col">
@@ -35,7 +35,7 @@
                         </div>
                         <div class="mb-3 col">
                             <label for="exampleInputPassword1" class="form-label">Phone</label>
-                            <input type="text" class="form-control" id="exampleInputPassword1" name="phone" value="{% if spobj %}{{spobj.phone}}{% endif %}">
+                            <input type="text" class="form-control" id="exampleInputPassword1" name="phone" value="{% if spobj %}{{spobj.phone}}{% endif %}" maxlength="10">
                         </div>
                     </div>
                     <div class="mb-3 col">

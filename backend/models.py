@@ -31,6 +31,7 @@ class ServiceProvider(db.Model,UserMixin):
     status=db.Column(db.String)
     servicename=db.Column(db.String,db.ForeignKey("services.name"))
     receive_request=db.relationship("Request",backref="servprovider",cascade="all, delete-orphan")
+    avail_slots=db.relationship("ProvidersAvailability",backref="servprovider",cascade="all, delete-orphan")
     def get_id(self):
         return self.email
     
